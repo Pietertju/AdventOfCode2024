@@ -1,6 +1,6 @@
 def getInput():
     lines = []
-    with open("./input.txt") as file:
+    with open("./example.txt") as file:
         lines = [line.strip() for line in file.read().split("\n")]
     
     orderings = []
@@ -51,6 +51,18 @@ def orderPages(orderings, pages):
             relevantOrderings.append((before, after))
 
     correctOrdering = []
+
+    # this doesnt actually matter since the fact that the middle page number must be deterministic for the solution to be possible,
+    # we know that there won't be pages without rules attached to them as that would make multiple orders possible
+    for page in pages:
+        pagePresent = False
+        for (before, after) in relevantOrderings:
+            if before == page or after == page:
+                pagePresent = True
+                break
+
+        if not pagePresent:
+            correctOrdering.append(page)
     
     # We make the assumption that an ordering is possible (i.e. no loops)
     while len(correctOrdering) != len(pages):
