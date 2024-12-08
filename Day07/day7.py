@@ -14,35 +14,49 @@ def getInput():
 
 def equationPossible(answer, numbers, options):
     operators = len(numbers) - 1
-    totalPossibilities = options ** operators
     operations = [0] * operators
-    if equationCorrect(answer, numbers, operations):
-        return True
-    for _ in range(totalPossibilities-1):
-        currentIndex = 0
+   
+    while True:
+        (correct, faultyIndex) = equationCorrect(answer, numbers, operations)
+        if correct:
+            return True
+        elif sum(operations) == operators * (options-1):
+            break
+        elif faultyIndex > -1:
+            operations[faultyIndex] += 1
+            while operations[faultyIndex] > (options-1):
+                operations[faultyIndex] = 0
+                faultyIndex-=1
+                if faultyIndex < 0:
+                    return False
+                operations[faultyIndex] += 1
+            continue
+
+        currentIndex = operators-1
         operations[currentIndex] += 1
         while operations[currentIndex] > (options-1):
             operations[currentIndex] = 0
-            currentIndex+=1
+            currentIndex-=1
+            if currentIndex < 0:
+                return False
             operations[currentIndex] += 1
-
-        if equationCorrect(answer, numbers, operations):
-            return True
-        
     return False
 
 def equationCorrect(answer, numbers, operations):
     ans = numbers[0]
     index = 1
-    for operation in operations:
-        if operation == 0:
+    for operation in operations:     
+        if operation == 1:
             ans *= numbers[index]
-        elif operation == 1:
+        elif operation == 0:
             ans += numbers[index]
         elif operation == 2:
             ans = int(str(ans) + str(numbers[index]))
+
+        if ans > answer:
+            return False, index - 1
         index += 1
-    return answer == ans
+    return answer == ans, -1
 
 def partOne(equations):
     sum = 0
@@ -54,7 +68,10 @@ def partOne(equations):
     
 def partTwo(equations):
     sum = 0
+    index = 1
     for (answer, numbers) in equations:
+        print(index, "/", len(equations))
+        index += 1
         if equationPossible(answer, numbers, 3):
             sum += answer
     print("Part Two: ", sum)
