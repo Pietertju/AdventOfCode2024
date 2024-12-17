@@ -87,19 +87,76 @@ def partOne(grid):
                     if 0 <= newX < len(floodFilledGrid) and 0 <= newY < len(floodFilledGrid[x]):
                         if floodFilledGrid[newX][newY] != testRegion:
                             perimeter += 1
-
-        #print(testRegion, " - ", area, " - ", perimeter)
         sum += area * perimeter                 
-    print(floodFilledGrid)
-    print(grid)
+    #print(floodFilledGrid)
+    #print(grid)
     print("Part One: ", sum)
+    return floodFilledGrid, regionIndex-1
 
-def partTwo(grid):
+def partTwo(floodFilledGrid, regionIndex):
     sum = 0
 
+    for region in range(regionIndex):
+        testRegion = region+1
+
+        # count area and parameter
+        area = 0
+        sides = 0
+        
+        # vertical sides
+        for x in range(len(floodFilledGrid)):
+            countingTop = False
+            countingBottom = False
+            
+            for y in range(len(floodFilledGrid[x])):
+                (aboveX, aboveY) = (x-1, y)
+                (belowX, belowY) = (x+1, y)
+                if floodFilledGrid[x][y] == testRegion:
+                    area += 1
+                    if aboveX < 0 or floodFilledGrid[aboveX][aboveY] != testRegion:
+                        if not countingTop:
+                            countingTop = True
+                            sides += 1
+                    else:
+                        countingTop = False
+
+                    if belowX >= len(floodFilledGrid) or floodFilledGrid[belowX][belowY] != testRegion:
+                        if not countingBottom:
+                            countingBottom = True
+                            sides += 1
+                    else:
+                        countingBottom = False
+                else:
+                    countingTop = False
+                    countingBottom = False
+        # horizontal sides
+        for y in range(len(floodFilledGrid[0])):
+            countingLeft = False
+            countingRight = False
+            for x in range(len(floodFilledGrid)):
+                (rightX, rightY) = (x, y+1)
+                (leftX, leftY) = (x, y-1)
+                if floodFilledGrid[x][y] == testRegion:
+                    if leftY < 0 or floodFilledGrid[leftX][leftY] != testRegion:
+                        if not countingLeft:
+                            countingLeft = True
+                            sides += 1
+                    else:
+                        countingLeft = False
+
+                    if rightY >= len(floodFilledGrid[x]) or floodFilledGrid[rightX][rightY] != testRegion:
+                        if not countingRight:
+                            countingRight = True
+                            sides += 1
+                    else:
+                        countingRight = False  
+                else:
+                    countingRight = False
+                    countingLeft = False
+        sum += area * sides
     print("Part Two: ", sum)
 
 grid = getInput()
 
-partOne(grid)
-partTwo(grid)
+filledGrid, maxRegions = partOne(grid)
+partTwo(filledGrid, maxRegions)
