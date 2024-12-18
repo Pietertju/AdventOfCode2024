@@ -44,7 +44,7 @@ def partOne(obstacles):
     queue.append((position))
 
     while len(queue) > 0:
-        position = queue.pop()
+        position = queue.pop(0)
         (x, y) = position
 
         nextPathLength = shortestPathGrid[x][y] + 1
@@ -57,29 +57,29 @@ def partOne(obstacles):
                     queue.append((newX, newY))
 
     print("Part One:", shortestPathGrid[gridSize-1][gridSize-1])
-    
-def partTwo(obstacles):
-    grid = [(['.'] * gridSize) for x in range(gridSize)]
 
-    for index in range(obstacleCount):
-        (x, y) = obstacles[index]
-        grid[x][y] = '#'
-    
-    
-    for index in range(obstacleCount, len(obstacles)):
-        newObstacle = obstacles[index]
-        (obstacleX, obstacleY) = newObstacle
-        grid[obstacleX][obstacleY] = '#'
+def partTwo(obstacles):
+    left = obstacleCount
+    right = len(obstacles) - 1
+
+    lastObstacleThatFit = -1
+
+    while left <= right:
+        mid = int((left + right)/2)
+        grid = [(['.'] * gridSize) for _ in range(gridSize)]
+        for index in range(mid+1):
+            (x, y) = obstacles[index]
+            grid[x][y] = '#'
 
         position = (0, 0)
 
         queue = []
         queue.append((position))
         
-        shortestPathGrid = [([0] * gridSize) for x in range(gridSize)]
+        shortestPathGrid = [([0] * gridSize) for _ in range(gridSize)]
 
         while len(queue) > 0:
-            position = queue.pop()
+            position = queue.pop(0)
             (x, y) = position
 
             nextPathLength = shortestPathGrid[x][y] + 1
@@ -91,9 +91,14 @@ def partTwo(obstacles):
                         shortestPathGrid[newX][newY] = nextPathLength
                         queue.append((newX, newY))
 
-        if shortestPathGrid[gridSize-1][gridSize-1]  == 0:
-            break
-    print("Part Two:", obstacleY, ",", obstacleX)
+        if shortestPathGrid[gridSize-1][gridSize-1] == 0:
+            right = mid - 1
+        else:
+            lastObstacleThatFit = mid
+            left = mid + 1
+    
+    (y, x) = obstacles[lastObstacleThatFit+1]
+    print("Part Two:", x, ",", y)
 
 obstacles = getInput()
 

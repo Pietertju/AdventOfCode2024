@@ -1,5 +1,5 @@
 def getInput():
-    with open("./example.txt") as file:
+    with open("./input.txt") as file:
         lines = file.read().split("\n")
         
     grid = [list(line) for line in lines]
@@ -67,7 +67,7 @@ def partOneAndTwo(grid, startX, startY, endX, endY):
     moveQueue.append((startX, startY, 2))
     moveQueue.append((startX, startY, 3))
     while(len(moveQueue) > 0):
-        (x, y, directionIndex) = moveQueue.pop()
+        (x, y, directionIndex) = moveQueue.pop(0)
         (dx, dy) = directions[directionIndex]
 
         currentCost = visited[x][y][directionIndex]
@@ -115,7 +115,7 @@ def partOneAndTwo(grid, startX, startY, endX, endY):
     handled = [(endX, endY, minIndex)]
 
     while len(queue) > 0:
-        entry = queue.pop()
+        entry = queue.pop(0)
         (toX, toY, toDirectionIndex), (fromX, fromY, directionIndex) = entry
 
         (dx, dy) = directions[directionIndex]
