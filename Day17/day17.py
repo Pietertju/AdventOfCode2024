@@ -71,46 +71,27 @@ def partTwo(regA, regB, regC, programIds):
 
     digitsInBaseEight = len(programIds)
     baseEightString = "0"*digitsInBaseEight
-    possibleDigitsInPlace = [[] for _ in range(digitsInBaseEight)]
-    possibleStartStrings = []
+    baseEightArray = [0] * digitsInBaseEight
+    baseEightArray[0] = 1
 
-    # first digit
-    for digit in range(1,8):
-        baseEightString = str(digit) + baseEightString[1:]
+    index = 0
+    while 0 <= index < digitsInBaseEight:
+        baseEightString = "".join(map(str,baseEightArray))
         regA = int(baseEightString, 8)
-
         output = runProgram(regA, regB, regC, programIds)
+        if output[-(index+1):] == programIds[-(index+1):]:
+            index += 1
+            continue
 
-        if output[-1] == programIds[-1]:
-            if digit not in possibleDigitsInPlace[0]:
-                possibleDigitsInPlace[0].append(digit)
-
-    # rest of digits
-    for index in range(1, digitsInBaseEight):
-        possibleStartArrays = itertools.product(*possibleDigitsInPlace[:index])
-        possibleStartStrings = ["".join(map(str,possibleStartArray)) for possibleStartArray in possibleStartArrays]
-        
-        for possibleStartString in possibleStartStrings:
-            baseEightString = possibleStartString + baseEightString[len(possibleStartString):]
-            for digit in range(8):
-                baseEightString = baseEightString[:index] + str(digit) + baseEightString[index+1:]
-                regA = int(baseEightString, 8)
-
-                output = runProgram(regA, regB, regC, programIds)
-
-                if output[-(index+1)] == programIds[-(index+1)]:
-                    if digit not in possibleDigitsInPlace[index]:
-                        possibleDigitsInPlace[index].append(digit)            
-
-    allPossibleValueArrays = itertools.product(*possibleDigitsInPlace)
-    allPossibleStrings = ["".join(map(str,possibleValueArray)) for possibleValueArray in allPossibleValueArrays]
-    allPossibleValues = [int(possibleString, 8) for possibleString in allPossibleStrings]
-    allPossibleValues.sort()
-    for aValue in allPossibleValues:
-        output = runProgram(aValue, regB, regC, programIds)
-        if output == programIds:
-            print("Part Two: ", aValue)
-            break
+        baseEightArray[index] += 1
+        while baseEightArray[index] >= 8:
+            baseEightArray[index] = 0
+            index -= 1
+            baseEightArray[index] += 1
+            if index < 0: 
+                break
+            
+    print(regA)
 
 a, b, c, programs = getInput()
 partOne(a, b, c, programs)
