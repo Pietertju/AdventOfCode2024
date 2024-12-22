@@ -1,5 +1,3 @@
-from functools import lru_cache
-
 def getInput():
     with open("./input.txt") as file:
         lines = [line.strip() for line in file.read().split("\n")]
@@ -112,7 +110,7 @@ def partOne(codes):
             
             COUNTER = 2
 
-            for index in range(COUNTER - 1):
+            for _ in range(COUNTER - 1):
                 shortestRoutes = getShortestKeyPadRoute(shortestRoutes)
 
             fromNumPad = toNumPad
